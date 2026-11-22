@@ -144,9 +144,9 @@ curl.exe -v --max-time 8 -o NUL http://example.com/
 - HTTPS 再加 21 字节 TLS 开销 = **150 字节**（不含 FCS）。
 - MTU 1500 时，IPv4 + TCP 无选项的最大载荷 = `1500 - 20 - 20 = 1460` 字节，这就是 **MSS**。
 
-### 验证 4：装好 Wireshark 之后
+### 验证 4：用 Wireshark / tshark 验证
 
-> 本机尚未安装 Wireshark（见 [`00-roadmap.md`](00-roadmap.md) 的环境表），下面这步需要先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 打开一个抓包文件，点中任意一帧，在中间面板依次展开 `Ethernet II` → `Internet Protocol Version 4` → `Transmission Control Protocol` → `Hypertext Transfer Protocol`。每一层左侧的三角展开后，就是这一层头部字段的逐个解析——和 lab 里打印的字段表是同一份东西。
 

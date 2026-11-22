@@ -1,6 +1,6 @@
 # 资源清单
 
-> 只列真实存在、且能直接打开的入口。抓包工具在本机尚未安装的，会明确标注。
+> 只列真实存在、且能直接打开的入口。工具状态按本机实测标注（Wireshark 4.0.17 已安装）。
 
 ## 书
 
@@ -19,13 +19,13 @@
 
 | 工具 | 入口 | 本机状态 | 用途 |
 |:---:|---|:---:|---|
-| Wireshark | <https://www.wireshark.org/download.html> | ⬜ 未安装 | 图形化抓包、过滤器、跟随 TCP 流 |
-| Npcap | <https://npcap.com/> | ⬜ 未安装 | Windows 抓包驱动，装 Wireshark 时勾选 |
-| tcpdump | <https://www.tcpdump.org/> | ⬜ 未安装 | 命令行抓包（Linux/macOS 常用） |
+| Wireshark | <https://www.wireshark.org/download.html> | ✅ 4.0.17（`E:\Wireshark`） | 图形化抓包、过滤器、跟随 TCP 流 |
+| Npcap | <https://npcap.com/> | ✅ 已安装 | Windows 抓包驱动，装 Wireshark 时勾选 |
+| tcpdump | <https://www.tcpdump.org/> | ⬜ 未安装（Windows 原生没有） | 命令行抓包（Linux/macOS 常用） |
 | curl | <https://curl.se/> | ✅ 8.22.0 | HTTP 验证、`-w` 五段计时、`--trace-ascii` |
 | Python | <https://www.python.org/> | ✅ 3.11（用 `py`） | 所有 lab 与字节级验证 |
 
-安装 Wireshark 时注意：**勾选 Npcap**，否则没有网卡可抓；公司电脑可能没有安装权限，此时先用 curl + Python 完成验证。
+本机已装 Wireshark 4.0.17 + Npcap（`E:\Wireshark`，`tshark`/`dumpcap`/`text2pcap`/`capinfos` 同目录，不在 PATH）。换机器安装时注意：**勾选 Npcap**，否则没有网卡可抓。本机实测**非管理员窗口也能抓 loopback**（见 [`labs/06-zombie-protocol`](labs/06-zombie-protocol/)），但公司电脑可能没有安装权限，此时先用 curl + Python 完成验证。
 
 ## 公开练习数据
 
@@ -35,6 +35,7 @@
 | Wireshark 用户手册 | <https://www.wireshark.org/docs/> | 过滤器语法与界面操作 |
 | tshark.dev 抓包检索 | <https://tshark.dev/search/pcaptable/> | 跨 Wireshark 示例与 PacketLife 的抓包检索 |
 | 本仓库自造数据 | [`tools/make-pcap.py`](tools/make-pcap.py) | 生成 `sample.pcap`（1 个 TCP SYN + 1 个 DNS 查询），内容完全可控 |
+| 本仓库真实靶场流量 | [`labs/06-zombie-protocol`](labs/06-zombie-protocol/) | 真 TCP 的 ZOMBIE 协议：`run.ps1` 造流量、`mkpcap.py` 造 demo.pcapng、`capture.ps1` 真抓 loopback |
 | 本仓库组帧示例 | [`tools/frame-demo.py`](tools/frame-demo.py) | 长度字段 + TLV 的组帧/拆帧与粘包处理 |
 
 > 第三方抓包（尤其是安全事件流量）可能含恶意内容或隐私数据，**只在隔离环境离线分析**，不要在生产机打开，也不要执行其中的载荷。

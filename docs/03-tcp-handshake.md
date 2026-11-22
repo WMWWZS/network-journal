@@ -207,9 +207,9 @@ netstat -ano | Select-String ":54321"
 
 > 本机实测 `TIME_WAIT` 数量常年不为零（浏览器、Steam、各类客户端都在频繁建短连接），这是正常的；真正要警惕的是 `CLOSE_WAIT` 长期堆积。另外本机的 `Get-NetTCPConnection` 在当前会话里返回「拒绝访问」（CIM 权限限制），所以本文统一用 `netstat -ano`。
 
-### 验证 3：装好 Wireshark 之后
+### 验证 3：用 Wireshark / tshark 验证
 
-> 本机尚未安装 Wireshark，以下过滤器需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 ```text
 tcp.flags.syn == 1 && tcp.flags.ack == 0     # 只看 SYN

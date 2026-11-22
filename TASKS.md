@@ -118,11 +118,12 @@
 
 ## 第 9 周：抓包工具与过滤器
 
-- [ ] 安装 Wireshark（官网下载，勾选 Npcap），确认 `tshark -D` 能列出网卡
+- [ ] 确认 Wireshark 装好（本机 `E:\Wireshark`，4.0.17，Npcap 已装）：`& 'E:\Wireshark\tshark.exe' -D` 能列出网卡
 - [ ] 读 [08 · 抓包与协议分析](docs/08-capture-and-analysis.md)
 - [ ] 跑 `py tools/make-pcap.py` 生成 `sample.pcap`，用 Wireshark 打开
 - [ ] 在 `sample.pcap` 上验证：`tcp.flags.syn == 1`、`dns.qry.name == "www.example.com"` 各命中 1 个包
 - [ ] 抓一次自己机器的 HTTP 请求，用 `Follow → TCP Stream` 看清请求/响应
+- [ ] 用 [lab06](labs/06-zombie-protocol/) 的 `capture.ps1` 抓一次 `127.0.0.1:47000/47001` 的 loopback，确认 `evidence\streams.txt` 里有 `zombie.opcode`
 - [ ] 在 `notes/` 写 1 条：捕获过滤器与显示过滤器混用会怎样
 
 **本周产出**：1 个自己的 pcap（不入库）+ 1 条带过滤器的 `notes/`。
@@ -132,11 +133,16 @@
 - [ ] 读 [09 · 自定义二进制协议](docs/09-custom-binary-protocol.md)
 - [ ] 跑 `py tools/frame-demo.py`，确认按 3 字节分块能解出 2 帧
 - [ ] 把分块大小改成 1 和 7，各跑一次，记录缓冲区变化
+- [ ] 跑通 [`labs/06-zombie-protocol`](labs/06-zombie-protocol/)：`run.ps1` 的 13 条自检全部 `PASS`、`VERDICT: PASS`
+- [ ] 从 `tap.txt` / `run.txt` 里拆出 ATTACK 帧的 4 段：`total_len(2) + opcode(1) + flags(1) + payload(12)`，并说出 payload 里 3 个字段
+- [ ] 用两条不同长度的消息验证长度口径：`total_len` 10/14/22 + 2 = 整帧 12/16/24
+- [ ] 用 Ghidra 找到 `send` 的调用者 `FUN_140001be0`，指出 `frame[0] = payload_len + 2` 与 `uVar5 = payload_len + 4`（证据在 `re/evidence/`）
+- [ ] 用 `tap.py --hack-claimed` 做改包回血实验：`--trust-client` 血 100 → 1，`--authoritative` 照掉到 75
 - [ ] 自己设计一个 12 字节头（magic/version/cmd/len/seq/crc），写编码 + 解码
 - [ ] 用「两条不同长度的消息」验证自己设计的长度字段口径
 - [ ] 阶段复盘：给出一个陌生 TCP 负载，判断它是定长、分隔符还是长度字段
 
-**本周产出**：一份自定义协议格式表 + 1 条 `notes/`。
+**本周产出**：一份自定义协议格式表（见 lab06 README）+ 1 条 `notes/`。
 
 ---
 

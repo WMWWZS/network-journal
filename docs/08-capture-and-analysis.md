@@ -22,14 +22,14 @@
 
 | 工具 | 本机状态 | 说明 |
 |:---:|---|---|
-| Wireshark / tshark / dumpcap | **未安装** | 图形界面 + 命令行 + 抓包引擎，安装时需勾选 Npcap |
+| Wireshark / tshark / dumpcap | **已安装 4.0.17**（`E:\Wireshark`，不在 PATH） | 图形界面 + 命令行 + 抓包引擎，Npcap 已装 |
 | tcpdump | 未安装（Windows 原生没有） | Linux/macOS 自带；Windows 上需 Npcap 与兼容版本 |
 | WPA / xperf / wpr | 已安装（Windows Performance Toolkit 10.0.26100） | 系统级 ETW trace（ETL），不是 pcap 抓包；用 WPA 打开分析 |
 | curl | 已安装（8.22.0） | 能看应用层交互，不是抓包 |
 | Python 3.11 | 已安装（`py`） | 可手工生成/解析 pcap |
 | nmap / ncat | 未安装 | 连通性检查用，需授权 |
 
-> 安装途径：Wireshark 官网 <https://www.wireshark.org/download.html>，安装时勾选 Npcap；`tshark` 和 `dumpcap` 会随 Wireshark 一起装好。**本文所有 Wireshark / tshark 命令都标注了「需安装」，不伪造运行输出。**
+> 本机装的是 Wireshark 4.0.17（`E:\Wireshark`，含 Npcap）：`tshark`、`dumpcap`、`text2pcap`、`capinfos` 都在同一目录，不在 PATH，所以本文命令写绝对路径或先 `cd E:\Wireshark`。**下面贴的都是实际跑过的输出，没跑过的会标「需安装」。** 一次完整的真实抓包 + Lua 解析见 [`labs/06-zombie-protocol`](../labs/06-zombie-protocol/)。
 
 ### 2. 两种过滤器，别混用
 
@@ -62,8 +62,8 @@
 ### 4. tcpdump 与 tshark 的常用姿势
 
 ```powershell
-# 以下命令在本机都需要先安装对应工具
-tcpdump -i eth0 -nn -s 0 -w cap.pcap 'tcp port 443'   # Linux/macOS
+# tshark 已装（E:\Wireshark\tshark.exe，不在 PATH 就写绝对路径）；tcpdump 本机没有
+tcpdump -i eth0 -nn -s 0 -w cap.pcap 'tcp port 443'   # Linux/macOS，本机需另装
 tshark -D                                              # 列出网卡
 tshark -i 1 -f "tcp port 80" -c 20                     # 抓 20 个包
 tshark -r cap.pcap -Y "http.request" -T fields -e http.host -e http.request.uri
@@ -142,14 +142,14 @@ Format-Hex -Path .\sample.pcap | Select-Object -First 2
 
 预期看到 `D4 C3 B2 A1` 开头，随后是版本 `02 00 04 00`、时区、snaplen `FF FF 00 00`、链路类型 `01 00 00 00`。
 
-### 验证 3：装好 Wireshark 后打开 sample.pcap
+### 验证 3：用 tshark 打开 sample.pcap
 
-> 本机尚未安装 Wireshark，以下命令需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark.exe` 也在那里，不在 PATH 就写绝对路径）。
 
 ```powershell
-tshark -r sample.pcap
-tshark -r sample.pcap -Y "dns.qry.name == \"www.example.com\""
-tshark -r sample.pcap -Y "tcp.flags.syn == 1"
+& 'E:\Wireshark\tshark.exe' -r sample.pcap
+& 'E:\Wireshark\tshark.exe' -r sample.pcap -Y "dns.qry.name == \"www.example.com\""
+& 'E:\Wireshark\tshark.exe' -r sample.pcap -Y "tcp.flags.syn == 1"
 ```
 
 两条过滤器分别命中 1 个包。GUI 里可以继续练：
@@ -202,5 +202,6 @@ netsh trace stop
 - 上一篇：[07 · HTTP/2 与 HTTP/3](07-http2-http3-quic.md)
 - 下一篇：[09 · 自定义二进制协议](09-custom-binary-protocol.md)
 - 抓包怎么用于排障：[10 · 延迟分解与故障排查](10-latency-and-troubleshooting.md)
+- 一次完整的真实抓包 + Lua 解析：[`labs/06-zombie-protocol`](../labs/06-zombie-protocol/)（真 TCP 靶场、loopback 抓包、`tshark -Y zombie`）
 - 练习数据生成器：[`tools/make-pcap.py`](../tools/make-pcap.py)
 - 合法与授权边界：[`resources.md`](../resources.md)

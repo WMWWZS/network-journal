@@ -186,9 +186,9 @@ rto_trace([100, 120, 140, 300, 130])
 
 预期输出与上表一致。把 `min_rto` 改成 200（Linux 的量级）再跑，前四行的 RTO 会从 1000 变成 300、272.5、272.19、447.85 —— 这就是「为什么 Linux 的重传反应比 Windows 更激进」。
 
-### 验证 4：装好 Wireshark 之后
+### 验证 4：用 Wireshark / tshark 验证
 
-> 本机尚未安装 Wireshark，以下过滤器需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 ```text
 tcp.analysis.retransmission            # 所有重传

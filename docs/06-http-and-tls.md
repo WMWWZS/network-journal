@@ -208,9 +208,9 @@ curl: (35) schannel: AcquireCredentialsHandle failed
 
 这是 **Schannel 凭据在当前会话不可用**导致的，不是网络问题（HTTP 访问同一域名正常）。所以本仓库的 HTTPS 验证用 Python `ssl` 或装好 Wireshark 后抓包，不贴未经验证的握手截图。
 
-### 验证 5：装好 Wireshark 之后
+### 验证 5：用 Wireshark / tshark 验证
 
-> 本机尚未安装 Wireshark，以下过滤器需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 ```text
 tls.handshake.type == 1                                  # ClientHello

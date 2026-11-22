@@ -202,9 +202,9 @@ nslookup example.com
 
 本机实测：`nslookup` 直连配置里的 DNS 服务器（`119.29.29.29`）时出现 `DNS request timed out`，而 `Resolve-DnsName` 正常返回。原因是**两者走的路径不同**：`nslookup` 自己构造 DNS 包直接发给配置的服务器，`Resolve-DnsName` 走系统解析栈（本机可能经由代理/DoH）。排障时第一步永远是确认「流量实际问的是谁」，而不是假设配置里写的服务器就在生效。
 
-### 验证 4：装好 Wireshark 之后
+### 验证 4：用 Wireshark / tshark 验证
 
-> 本机尚未安装 Wireshark，以下过滤器需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 ```text
 dns.qry.name == "example.com"

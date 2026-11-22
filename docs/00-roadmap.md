@@ -102,7 +102,7 @@ flowchart LR
 
 **对应文档**：[08 · 抓包与协议分析](08-capture-and-analysis.md)、[09 · 自定义二进制协议](09-custom-binary-protocol.md)
 
-**产出**：对一个自己可控的服务抓一段流量，写出「分组边界 + 字段表」；补全 [`notes/_TEMPLATE.md`](../notes/_TEMPLATE.md) 里的一条完整记录。
+**产出**：[`labs/06-zombie-protocol`](../labs/06-zombie-protocol/) —— 自己可控的真 TCP 靶场：Wireshark Lua 还原帧结构、Ghidra 反编译印证长度口径、改包看服务端信不信客户端；再补一条 `notes/` 记录。
 
 **阶段验收**：给出一个从没见过的 TCP 负载，能判断它是定长、分隔符还是长度字段定界，并还原出至少 3 个字段。
 
@@ -129,7 +129,7 @@ flowchart LR
 | 2 | 3–4 | [03](03-tcp-handshake.md) / [04](04-tcp-reliability.md) | 一次连接状态迁移记录 | SYN 为什么占序列号？TIME_WAIT 为什么存在？ |
 | 3 | 5–6 | [05](05-udp-and-dns.md) / [06](06-http-and-tls.md) | 一次 HTTPS 请求的字段拆解 | DNS 何时走 TCP？TLS 1.3 省了哪次往返？ |
 | 4 | 7–8 | [07](07-http2-http3-quic.md) | 三代协议对比表 + ALPN 探测 | h2 的队头阻塞在哪一层？QUIC 为什么用连接 ID？ |
-| 5 | 9–10 | [08](08-capture-and-analysis.md) / [09](09-custom-binary-protocol.md) | 一份自定义协议的字段表 | 怎么定界？长度字段是哪种口径？ |
+| 5 | 9–10 | [08](08-capture-and-analysis.md) / [09](09-custom-binary-protocol.md) | [`labs/06-zombie-protocol`](../labs/06-zombie-protocol/)（ZOMBIE 帧表 + 长度口径 + 反编译印证） | 怎么定界？长度字段是哪种口径？ |
 | 6 | 11–12 | [10](10-latency-and-troubleshooting.md) | 一份延迟拆解报告 | 五段各占多少？瓶颈证据是什么？ |
 
 ## 常见失败模式
@@ -169,7 +169,8 @@ flowchart LR
 |:---:|---|---|
 | Windows 11 x64 | 主力平台 | 命令、`netsh`、`netstat` |
 | Python 3.11 | 用 `py` 启动，**不是** `python` | lab 与所有字节级验证 |
-| MinGW-w64 gcc 14.2 | `gcc --version` 可查 | 需要时写小工具验证 |
+| MinGW-w64 gcc 14.2 + objdump 2.44 | `gcc --version` / `objdump --version` 可查 | lab06 编译靶场、看导入表 |
+| Wireshark 4.0.17 | `E:\Wireshark`（不在 PATH）：`tshark` / `dumpcap` / `text2pcap` / `capinfos`，Npcap 已装 | lab05/06 抓包、过滤器、Lua 解析 |
 | curl 8.22.0 | Schannel 后端，**不含 HTTP/2、HTTP/3 支持** | HTTP 层验证、`-w` 计时 |
 | WPA / xperf / wpr | Windows Performance Toolkit 10.0.26100 | 系统级 ETW trace（ETL）分析 |
 
@@ -177,11 +178,12 @@ flowchart LR
 
 | 工具 | 现状 | 安装途径 |
 |:---:|---|---|
-| Wireshark / tshark / dumpcap | 未安装 | 官网 <https://www.wireshark.org/download.html>，安装时勾选 Npcap |
 | nmap / ncat | 未安装 | 官网 <https://nmap.org/download.html>（仅用于授权范围内的连通性检查） |
 | openssl / dig | 未安装 | 用 Python `ssl`、`socket` 替代 |
 
-> **注意本机的 Python 坑**：`python` 是 Microsoft Store 的占位 stub，直接运行会失败且没有任何输出（`EXIT=9009`）。本仓库所有命令统一写 `py`。另外，`py craft.py` 这种写法要求脚本首行不能是 `#!/usr/bin/env python3`，否则 `py` 启动器会去找不存在的 `python3`，同样得到 9009 —— lab 的 `craft.py` 已经去掉了 shebang。
+> **注意本机的 Python 坑**：`python` 是 Microsoft Store 的占位 stub，直接运行会失败且没有任何输出（`EXIT=9009`）。本仓库所有命令统一写 `py`。另外，`py xxx.py` 这种写法要求脚本首行不能是 `#!/usr/bin/env python3`，否则 `py` 启动器会去找不存在的 `python3`，同样得到 9009 —— lab 的 `craft.py`、`mkpcap.py`、`tap.py` 都已经去掉了 shebang（`py -3 xxx.py` 也能绕过）。
+>
+> **抓包权限**：lab06 实测**普通（非管理员）窗口也能抓 loopback**（`Medium Mandatory Level`，dumpcap 抓到 62 个包）；最稳仍是管理员窗口。详见 [lab06 的「坑」](../labs/06-zombie-protocol/README.md#坑)。
 
 ## 相关入口
 

@@ -171,9 +171,9 @@ pathping example.com
 - `tracert` 逐跳显示 RTT，能看出延迟在哪个网段跳升；
 - `pathping` 统计每跳丢包率（耗时较长）。
 
-### 验证 5：装好 Wireshark 后看五段
+### 验证 5：用 Wireshark / tshark 看五段
 
-> 本机尚未安装 Wireshark，以下过滤器需先安装。
+> Wireshark 4.0.17 已装在 `E:\Wireshark`（`tshark` 同目录，不在 PATH），下面命令可以直接跑；抓包与 Lua 解析的完整真实输出见 [lab06](../labs/06-zombie-protocol/README.md)。
 
 ```text
 dns.time > 0.2

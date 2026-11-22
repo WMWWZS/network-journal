@@ -209,5 +209,6 @@ py tools\frame-demo.py
 
 - 上一篇：[08 · 抓包与协议分析](08-capture-and-analysis.md)
 - 下一篇：[10 · 延迟分解与故障排查](10-latency-and-troubleshooting.md)
+- **实践（本篇的靶场版）**：[`labs/06-zombie-protocol`](../labs/06-zombie-protocol/) —— 真 TCP 的 ZOMBIE 协议：`total_len` 差 2、16006 字节帧被 `recv` 切 3~4 次、Wireshark Lua 解析、Ghidra 反编译印证 `frame[0] = payload_len + 2`、改包回血实验
 - 组帧/拆帧完整代码：[`tools/frame-demo.py`](../tools/frame-demo.py)
-- 练习 pcap：[`tools/make-pcap.py`](../tools/make-pcap.py)
+- 练习 pcap：[`tools/make-pcap.py`](../tools/make-pcap.py)（或 lab06 现场生成的 `demo.pcapng`）

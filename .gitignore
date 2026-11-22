@@ -35,3 +35,7 @@ Desktop.ini
 *.tmp
 *.log
 *.bak
+
+# lab 运行时的中间目录 / 产物（脚本会自己清理，这里兜底）
+_runtmp/
+expanded/
