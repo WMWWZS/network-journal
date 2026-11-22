@@ -208,7 +208,7 @@ powershell -ExecutionPolicy Bypass -File .\capture.ps1
 ```
 
 - **本机实测：普通（非管理员）PowerShell 也能抓 loopback**。`whoami /groups` 是 `Medium Mandatory Level`，dumpcap 照样抓到 62 个包（见 `capture/evidence/live-capture.txt`）。
-- 但最稳的是**管理员窗口**：右键「开始」→「终端(管理员)」。reversing-journal 的原版 `capture.ps1` 非管理员会直接退出；本目录的版本改成了「提示但继续」，因为这台机器上 Npcap 没拦普通权限。
+- 但最稳的是**管理员窗口**：右键「开始」→「终端(管理员)」。reversing-journal 那边的 `capture.ps1` 也已同步改成「提示后继续」（同一份证据）；本目录同样如此，因为这台机器上 Npcap 没拦普通权限。
 - 抓包文件（`*.pcapng`）**已列在 `.gitignore` 里，不会进仓库**；README 里引用的是 `capture/evidence/` 下的文本解析。
 
 ### 4. 反编译（Ghidra，可选）
@@ -623,7 +623,7 @@ T3 —— 同一个被改过的包，打在权威服务端上，服务端自己�
 9. **中文 `.ps1` 必须 UTF-8 with BOM + CRLF**：Windows PowerShell 5.1 会把无 BOM 的 `.ps1` 按 ANSI 解码，中文全乱；本目录含中文的 `.ps1` 都带 BOM。
 10. **C 程序的 stdout 重定向到文件是块缓冲**：不 `fflush` 的话，进程被 `Stop-Process` 掐掉时最后几行日志会丢。`zombie.h` 的 `zb_log()` 每行都 flush，`tap.py` 用 `-u` 启动。
 11. **pcap 不进仓库**：`.gitignore` 忽略 `*.pcap/.pcapng`（体积 + 可能含敏感信息）。本 lab 的 pcap 用 `mkpcap.py` 现场生成，真抓的 pcap 也只在本地；仓库里只留文本证据。
-12. **「抓包必须管理员」在这台机器上不成立**：reversing-journal 的 `capture.ps1` 非管理员会直接退出，但本机 Npcap 没限制普通权限——`Medium Mandatory Level` 的窗口用 dumpcap 抓 loopback 抓到了 62 个包（`capture/evidence/live-capture.txt`）。
+12. **「抓包必须管理员」在这台机器上不成立**：本机 Npcap 没限制普通权限（reversing-journal 的 `capture.ps1` 也已从「非管理员直接退出」改成「提示后继续」）——`Medium Mandatory Level` 的窗口用 dumpcap 抓 loopback 抓到了 62 个包（`capture/evidence/live-capture.txt`）。
     最稳仍然是管理员窗口；本目录的 `capture.ps1` 因此改成「提示但继续」。
 13. **`analyzeHeadless` 不能把同一个文件重复导入同名项目**：Ghidra 的项目是 `<name>.gpr` + `<name>.rep` 两个文件（不是目录），第二次跑会报 `Found conflicting program file in project`。
     `analyze.ps1` 现在会先删掉 `network-journal-lab06.gpr/.rep` 再导入（只删自己这个临时项目）。
